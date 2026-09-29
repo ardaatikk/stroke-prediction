@@ -1,0 +1,6 @@
+Balanced Accuracy: 0.7714
+Precision: 0.1379
+Recall: 0.8000
+F1 Score: 0.2353
+ROC-AUC: 0.8437
+PR-AUC: 0.2682
