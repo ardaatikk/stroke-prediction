@@ -138,8 +138,8 @@ Model selection is performed only on the development set using **stratified 5-fo
 Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/ardaatikk/stroke_prediction.git
-cd stroke_prediction
+git git clone https://github.com/ardaatikk/stroke-prediction.git
+cd stroke-prediction
 pip install -r requirements.txt
 ```
 
