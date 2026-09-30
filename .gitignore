@@ -2,6 +2,25 @@
 __pycache__/
 *.py[cod]
 *.pyo
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Generated outputs
+outputs/
+
+# IDE
+.vscode/
+.idea/# Python
+__pycache__/
+*.py[cod]
+*.pyo
 
 # Virtual environments
 .venv/
