@@ -1,5 +1,9 @@
 # Stroke Prediction with Imbalanced Machine Learning
 
+[![Tests](https://github.com/ardaatikk/stroke-prediction/actions/workflows/tests.yml/badge.svg)](https://github.com/ardaatikk/stroke-prediction/actions/workflows/tests.yml)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A reproducible machine learning pipeline for stroke classification using clinical and demographic features.
 
 The project focuses on a key challenge of the dataset: **severe class imbalance**. Rather than relying on raw accuracy, models are compared using stratified cross-validation and imbalance-aware metrics such as PR-AUC, ROC-AUC, balanced accuracy, recall, precision, and F1 score.
@@ -71,6 +75,8 @@ Target distribution:
 
 The original dataset contains missing BMI values, which are handled inside the preprocessing pipeline.
 
+The dataset corresponds to the publicly available stroke dataset commonly distributed as `healthcare-dataset-stroke-data.csv`. The copy used in this project was originally provided for academic coursework. Dataset licensing and usage terms are separate from the MIT license applied to the source code in this repository.
+
 ### Features
 
 The model uses:
@@ -97,6 +103,10 @@ Numerical features are:
 - Median imputed
 - Standardized
 
+Binary features are:
+
+- Imputed using the most frequent value
+
 Categorical features are:
 
 - Imputed using the most frequent category
@@ -109,10 +119,50 @@ The dataset is separated into:
 
 Model selection is performed only on the development set using **stratified 5-fold cross-validation**. The selected model is then trained on the full development set and evaluated once on the holdout set.
 
+PR-AUC is used as the primary model-selection metric because the positive stroke class is rare.
+
+## Automated Testing
+
+The project includes an automated test suite covering the main data, model, and inference components.
+
+Current test suite:
+
+- Data loading and validation
+- Feature/target separation
+- Missing-value preprocessing
+- Unknown categorical values
+- Model pipeline construction
+- Candidate model configuration
+- Model fitting and prediction
+- Probability outputs
+- Holdout metric generation
+- Model serialization and loading
+- End-to-end single-sample inference
+- Expected inference feature schema
+
+The current suite contains **15 passing tests**.
+
+Run all tests locally with:
+
+```bash
+python -m pytest -v
+```
+
+Development and testing dependencies can be installed with:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Tests are also executed automatically on pushes and pull requests to `main` using **GitHub Actions**.
+
 ## Project Structure
 
 ```text
 .
+├── .github/
+│   └── workflows/
+│       └── tests.yml
 ├── assets/
 │   ├── confusion_matrix.png
 │   ├── feature_coefficients.png
@@ -128,19 +178,36 @@ Model selection is performed only on the development set using **stratified 5-fo
 │   ├── evaluate.py
 │   ├── inference.py
 │   └── train.py
+├── tests/
+│   ├── test_data.py
+│   ├── test_inference.py
+│   └── test_models.py
 ├── .gitignore
+├── LICENSE
 ├── README.md
+├── requirements-dev.txt
 └── requirements.txt
 ```
 
 ## Installation
 
-Clone the repository and install the dependencies:
+Clone the repository:
 
 ```bash
 git clone https://github.com/ardaatikk/stroke-prediction.git
 cd stroke-prediction
+```
+
+Install runtime dependencies:
+
+```bash
 pip install -r requirements.txt
+```
+
+For development and testing:
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ## Training
@@ -151,19 +218,28 @@ Run model comparison, cross-validation, final model selection, and holdout evalu
 python src/train.py
 ```
 
-The trained pipeline is saved to:
+The trained preprocessing and classification pipeline is saved to:
 
 ```text
 models/stroke_model.joblib
 ```
 
+Cross-validation and holdout results are written to the `outputs/` directory.
+
 ## Evaluation
 
-Generate the evaluation metrics and visualizations:
+Generate evaluation metrics and visualizations:
 
 ```bash
 python src/evaluate.py
 ```
+
+Generated visualizations include:
+
+- Confusion matrix
+- ROC curve
+- Precision-Recall curve
+- Logistic Regression feature coefficients
 
 ## Inference
 
@@ -183,16 +259,25 @@ python src/inference.py \
   --smoking_status "formerly smoked"
 ```
 
-The serialized model contains both preprocessing and classification steps, so raw input values can be passed directly to the pipeline.
+Example output:
+
+```text
+Prediction: Stroke
+Model probability: <probability>
+```
+
+The serialized model contains both preprocessing and classification steps, so raw input values can be passed directly to the pipeline without manually reproducing the training transformations.
 
 ## Tech Stack
 
-- Python
+- Python 3.11+
 - NumPy
 - pandas
 - scikit-learn
 - Matplotlib
 - joblib
+- pytest
+- GitHub Actions
 
 ## Limitations
 
@@ -200,4 +285,12 @@ This project is intended as a machine learning and data science demonstration.
 
 The dataset is small and highly imbalanced, and the model has not undergone external or clinical validation. The reported results are specific to the dataset and experimental setup used in this repository.
 
+Model probabilities should not be interpreted as calibrated clinical risk estimates.
+
 **The model is not intended for medical diagnosis or clinical decision-making.**
+
+## License
+
+The source code in this repository is released under the [MIT License](LICENSE).
+
+The dataset is not covered by the repository's MIT license. Any use or redistribution of the dataset should follow the terms of its original source.
